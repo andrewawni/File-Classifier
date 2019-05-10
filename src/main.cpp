@@ -74,13 +74,13 @@ int main(int argc, char **argv)
     }
     else
     {
-            string op = "-rk";
-            if(!op.compare(argv[1]))
-                classifyRecursivelyKeep(argv[1]);
+    
+        classifyRecursivelyKeep(argv[1]);
         
     }
     return 0;
 }
+
 
 /*
 /home/undo/Development/Projects/FileClassifier/testingDir
@@ -208,6 +208,7 @@ vector<string> getSubdirectories(string _rootDirectory)
     return getSubdirectories;
 }
 
+/*
 string TypeOfFile(string s)
 {
     if (s == "mp3")
@@ -320,3 +321,4 @@ void classifyRecursively(string _rootDir)
         v.push_back(5);
     }
 }
+*/
