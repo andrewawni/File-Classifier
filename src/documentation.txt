@@ -1,0 +1,17 @@
+done: [default]
+    classify the current directory only, ignores any sub-directories.
+
+[-rk]
+    classify the current directory and all of its sub-directories, keeping everything in its own directory
+
+[-rr]
+    moves the content of all subdirectories to the root directory and classifies it afterwards.
+
+[-c][file extension][file type]
+    defines a custom file extension, e.g: classifier -c .py Python-Scripts
+
+usage:
+    classify [-option][directory]
+
+    classify -c .py python-scripts -rk
+    

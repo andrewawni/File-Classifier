@@ -1,3 +1,4 @@
+/*
 #include <cstdio>
 #include <iostream>
 #include <memory>
@@ -81,7 +82,8 @@ int main(int argc , char *argv[] )
 		else
 			cout << "Directory created";
 		exec(mkdir("NewFile"));
-	*/
 	}
 	system("pause");
 }
+*/
+	
