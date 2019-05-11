@@ -8,85 +8,29 @@
 
 using namespace std;
 
-void classifyRecursively(string);
+map<string, vector<string>> Data;
 
+void classifyRecursively(string);
 void classifyCurrentDirectory(string _rootDirectory);
 void classifyRecursivelyKeep(string _rootDirectory);
 void moveFilesToRoot(string _rootDirectory, string _currentDirectory);
+bool isValidDirectory(string _rootDirectory);
 
 vector<string> getFilesFromDirectory(string _rootDirectory);
 vector<string> getSubdirectories(string _rootDirectory);
 string getFileCategory(string _fileName);
+string exec(string _cmd);
 
-std::string exec(string _cmd)
-{
-    //converting _cmd to char array
-    char *temp = new char[_cmd.size() + 1];
-    strcpy(temp, _cmd.c_str());
+void populateData();
+int parseArguments(int argc, char **argv);
 
-    std::array<char, 128> buffer;
-    std::string result;
-    /* 
-    unique_ptr is a smart pointer that has two components:
-        1-a stored pointer: a pointer to the object it manages.
-        2-a stored deleter: a callable object that takes an argument of the same type as the stored pointer and is called to delete the managed object
-    */
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(temp, "r"), pclose);
 
-    if (!pipe)
-    {
-        throw std::runtime_error("popen() failed!");
-    }
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
-    {
-        result += buffer.data();
-    }
-    return result;
-}
 
-map<string, vector<string>> Data;
 
 int main(int argc, char **argv)
 {
-
-    Data["music"].push_back(".mp3");
-    Data["videos"].push_back(".mkv");
-    Data["documents"].push_back(".pdf");
-
-    if (argc == 1)
-    {
-        throw std::runtime_error("not enough arguments, use -help for usage info\n");
-        return 1;
-    }
-    else if (argc == 2)
-    {
-        string arg1 = argv[1];
-        if (arg1 == "-help")
-        {
-            ifstream inFile;
-            inFile.open("../documentation.txt");
-            string line;
-            while (getline(inFile, line))
-                cout << line << endl;
-        }
-        else
-        {
-            classifyCurrentDirectory(argv[1]);
-        }
-    }
-    else
-    {
-        string option = argv[1];
-
-        if (option == "-rk")
-            classifyRecursivelyKeep(argv[2]);
-        else if (option == "-rr")
-        {
-            moveFilesToRoot(argv[2], argv[2]);
-            classifyCurrentDirectory(argv[2]);
-        }
-    }
-    return 0;
+    populateData();
+    return parseArguments(argc, argv);
 }
 
 /*
@@ -239,4 +183,153 @@ vector<string> getSubdirectories(string _rootDirectory)
         commandOutput = commandOutput.substr(commandOutput.find('\n') + 1, commandOutput.size());
     }
     return getSubdirectories;
+}
+
+bool isValidDirectory(string _rootDirectory)
+{
+    // [ -d "$DIR" ] && echo "Yes"
+    string command = "";
+    command += "[ -d ";
+    command += _rootDirectory;
+    command += " ] && echo \"True\" ";
+    // cout << command << endl;
+    // cout << exec(command) << endl;
+    string output = exec(command);
+    output = output.substr(0, output.size() - 1); //removes '\n'
+    if (output.compare("True") == 0)
+        return true;
+    else
+        return false;
+}
+
+string exec(string _cmd)
+{
+    //converting _cmd to char array
+    char *temp = new char[_cmd.size() + 1];
+    strcpy(temp, _cmd.c_str());
+
+    std::array<char, 128> buffer;
+    std::string result;
+    /* 
+    unique_ptr is a smart pointer that has two components:
+        1-a stored pointer: a pointer to the object it manages.
+        2-a stored deleter: a callable object that takes an argument of the same type as the stored pointer and is called to delete the managed object
+    */
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(temp, "r"), pclose);
+
+    if (!pipe)
+    {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+    {
+        result += buffer.data();
+    }
+    return result;
+}
+
+void populateData()
+{
+    Data["music"].push_back(".mp3");
+    Data["videos"].push_back(".mkv");
+    Data["documents"].push_back(".pdf");
+}
+
+
+int parseArguments(int argc, char **argv)
+{
+    if (argc == 1)
+    {
+        //no path
+        throw std::runtime_error("not enough arguments, use -help for usage info\n");
+        return 1;
+    }
+    else if (argc == 2)
+    {
+        string arg1 = argv[1];
+        if (arg1 == "-help")
+        {
+            ifstream inFile;
+            inFile.open("../documentation.txt");
+            string line;
+            while (getline(inFile, line))
+                cout << line << endl;
+        }
+        else
+        {
+            throw std::runtime_error("not enough arguments, use -help for usage info\n");
+            return 1;
+        }
+    }
+    else if (argc == 3)
+    {
+        checkOptions:
+
+        string option = argv[1];
+        if (option == "-df")
+        {
+            if (isValidDirectory(argv[2]))
+                classifyCurrentDirectory(argv[2]);
+            else
+            {
+                throw std::runtime_error("No such directory\n");
+                return 1;
+            }
+        }
+        else if (option == "-rk")
+        {
+            if (isValidDirectory(argv[2]))
+                classifyRecursivelyKeep(argv[2]);
+            else
+            {
+                throw std::runtime_error("No such directory\n");
+                return 1;
+            }
+        }
+        else if (option == "-rr")
+        {
+            if (isValidDirectory(argv[2]))
+            {
+                moveFilesToRoot(argv[2], argv[2]);
+                classifyCurrentDirectory(argv[2]);
+            }
+            else
+            {
+                throw std::runtime_error("No such directory\n");
+                return 1;
+            }
+        }
+        else
+        {
+            throw std::runtime_error("No supported option, use -help for usage info\n");
+            return 1;
+        }
+    }
+    else if (argc == 6)
+    {
+
+        string option = argv[3];
+        if (option != "-c")
+        {
+            throw std::runtime_error("No supported options, use -help for usage info\n");
+            return 1;
+        }
+        string directory = argv[2];
+        if (!isValidDirectory(directory))
+        {
+            throw std::runtime_error("No such directory\n");
+            return 1;
+        }
+
+        string extension = argv[4];
+        string category = argv[5];
+        if (extension[0] != '.')
+        {
+            throw std::runtime_error("Invalid file extension\n");
+            return 1;
+        }
+        Data[category].push_back(extension);
+        goto checkOptions;
+    }
+    return 0;
 }

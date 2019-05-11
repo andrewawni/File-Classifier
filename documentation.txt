@@ -1,17 +1,21 @@
-done: [default]
+[-df] : default 
     classify the current directory only, ignores any sub-directories.
 
-[-rk]
+[-rk] : recursevily keep
     classify the current directory and all of its sub-directories, keeping everything in its own directory
 
-[-rr]
+[-rr] : recursevily remove
     moves the content of all subdirectories to the root directory and classifies it afterwards.
 
 [-c][file extension][file type]
     defines a custom file extension, e.g: classifier -c .py Python-Scripts
 
 usage:
-    classify [-option][directory]
+    classify [-option][directory] ... -c [extentsion][category]
 
-    classify -c .py python-scripts -rk
+    e.g: classify -rk /path/to/directory -c .mp4 movies
+         classify -df /path/to/directory
+
+
+    
     

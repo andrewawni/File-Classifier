@@ -1,0 +1,24 @@
+<userList>
+    <user>
+        <name>Ganna</name>
+        <password>eee</password>
+        <searchItems>
+            <searchItem>
+                <file> file1 </file>
+                <categories>
+                    <category>sport</category>
+                    <category>health</category>
+                    <category>life</category>
+                </categories>
+            </searchItem>
+            <searchItem>
+                <file> file2 </file>
+                <categories>
+                    <category>technology</category>
+                    <category>internet</category>
+                    <category>mobile</category>
+                </categories>
+            </searchItem>
+        </searchItems>
+    </user>
+</userList>
