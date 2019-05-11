@@ -11,11 +11,7 @@
     defines a custom file extension, e.g: classifier -c .py Python-Scripts
 
 usage:
-    classify [-option][directory] ... -c [extentsion][category]
 
+    classify [-option][directory] ... -c [extentsion][category]
     e.g: classify -rk /path/to/directory -c .mp4 movies
          classify -df /path/to/directory
-
-
-    
-    

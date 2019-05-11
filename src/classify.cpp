@@ -15,7 +15,7 @@ void classifyCurrentDirectory(string _rootDirectory);
 void classifyRecursivelyKeep(string _rootDirectory);
 void moveFilesToRoot(string _rootDirectory, string _currentDirectory);
 bool isValidDirectory(string _rootDirectory);
-
+bool isKeyFound(string _rootDirectory);
 vector<string> getFilesFromDirectory(string _rootDirectory);
 vector<string> getSubdirectories(string _rootDirectory);
 string getFileCategory(string _fileName);
@@ -23,9 +23,6 @@ string exec(string _cmd);
 
 void populateData();
 int parseArguments(int argc, char **argv);
-
-
-
 
 int main(int argc, char **argv)
 {
@@ -83,6 +80,9 @@ string getFileCategory(string _extension)
 
 void classifyCurrentDirectory(string _rootDirectory)
 {
+    if (isKeyFound(_rootDirectory))
+        return;
+    
     vector<string> files = getFilesFromDirectory(_rootDirectory);
     set<string> categories;
 
@@ -93,6 +93,7 @@ void classifyCurrentDirectory(string _rootDirectory)
 
         if (categories.find(category) == categories.end())
         {
+            //creates a new directory with the category name
             string command = "";
             command += "mkdir ";
             command += _rootDirectory;
@@ -100,8 +101,18 @@ void classifyCurrentDirectory(string _rootDirectory)
             command += category;
             categories.insert(category);
             exec(command);
+
+            //creates a hidden .classify_key.key" file in the created directory
+            command = "";
+            command += "touch ";
+            command += _rootDirectory;
+            command += "/";
+            command += category;
+            command += "/.classify_key.key";
+            exec(command);
         }
 
+        //moves the file to the folder of its category
         string command = "";
         command += "mv ";
         command += _rootDirectory;
@@ -129,7 +140,7 @@ void classifyRecursivelyKeep(string _rootDirectory)
 void moveFilesToRoot(string _rootDirectory, string _currentDirectory)
 {
     vector<string> subDirectories = getSubdirectories(_currentDirectory);
-    cout << _rootDirectory << ": " << _currentDirectory << endl;
+    // cout << _rootDirectory << ": " << _currentDirectory << endl;
     for (auto subDirectory : subDirectories)
     {
         moveFilesToRoot(_rootDirectory, _currentDirectory + "/" + subDirectory);
@@ -152,7 +163,8 @@ void moveFilesToRoot(string _rootDirectory, string _currentDirectory)
     if (_currentDirectory != _rootDirectory)
     {
         string command = "";
-        command += "cd .. && rm -d ";
+
+        command += "cd .. && rm -r ";
         command += _currentDirectory;
         exec(command);
     }
@@ -201,6 +213,22 @@ bool isValidDirectory(string _rootDirectory)
     else
         return false;
 }
+bool isKeyFound(string _rootDirectory)
+{
+    string command = "";
+    command += "[ -f ";
+    command += _rootDirectory;
+    command += "/.classify_key.key ";
+    command += "] && echo \"True\"";
+
+    string output = exec(command);
+    output = output.substr(0, output.size() - 1); //removes '\n'
+    cout << command << ": " << output << endl;
+    if (output.compare("True") == 0)
+        return true;
+    else
+        return false;
+}
 
 string exec(string _cmd)
 {
@@ -231,13 +259,26 @@ string exec(string _cmd)
 void populateData()
 {
     Data["music"].push_back(".mp3");
-    Data["videos"].push_back(".mkv");
-    Data["documents"].push_back(".pdf");
-}
 
+    Data["videos"].push_back(".mkv");
+    Data["videos"].push_back(".mp4");
+    
+    Data["Pictures"].push_back(".jpg");
+    Data["Pictures"].push_back(".png");
+    
+    Data["documents"].push_back(".pdf");
+    Data["documents"].push_back(".docx");
+
+    Data["archives"].push_back(".rar");
+    Data["archives"].push_back(".tar");
+    Data["archives"].push_back(".zip");
+
+
+}
 
 int parseArguments(int argc, char **argv)
 {
+    //argv[0] = path of executable
     if (argc == 1)
     {
         //no path
@@ -246,6 +287,7 @@ int parseArguments(int argc, char **argv)
     }
     else if (argc == 2)
     {
+        // ./main -help
         string arg1 = argv[1];
         if (arg1 == "-help")
         {
@@ -263,8 +305,8 @@ int parseArguments(int argc, char **argv)
     }
     else if (argc == 3)
     {
-        checkOptions:
-
+    checkOptions:
+        // .main/ -df /path/to/directory
         string option = argv[1];
         if (option == "-df")
         {
@@ -323,11 +365,13 @@ int parseArguments(int argc, char **argv)
 
         string extension = argv[4];
         string category = argv[5];
+
         if (extension[0] != '.')
         {
             throw std::runtime_error("Invalid file extension\n");
             return 1;
         }
+
         Data[category].push_back(extension);
         goto checkOptions;
     }
