@@ -33,31 +33,21 @@ a script that classifies all your files according to their extension.
         testingDir
         ├── A
         │   ├── C
-        │   │   ├── documents
-        │   │   │   └── document.pdf
+        │   │   ├── document.pdf
         │   │   └── K
-        │   │       ├── music
-        │   │       │   └── music.mp3
-        │   │       └── videos
-        │   │           └── movie.mkv
-        │   └── videos
-        │       └── movie.mp4
-        ├── archives
-        │   └── archive.rar
+        │   │       ├── movie.mkv
+        │   │       └── music.mp3
+        │   └── movie.mp4
+        ├── archive.rar
         ├── B
-        │   ├── J
-        │   │   └── documents
-        │   │       └── chapter1.pdf
-        │   └── Pictures
-        │       └── image.png
+        │   ├── image.png
+        │   └── J
+        │       └── chapter1.pdf
         ├── D
-        │   └── documents
-        │       └── text.docx
+        │   └── text.docx
         ├── E
-        │   ├── Pictures
-        │   │   └── picture.png
-        │   └── videos
-        │       └── movie.mkv
+        │   ├── movie.mkv
+        │   └── picture.png
         └── F
         
   - ```classify -rk testingDir```
