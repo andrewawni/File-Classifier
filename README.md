@@ -6,15 +6,19 @@ a script that classifies all your files according to their extension.
     classify [-option][directory] ... -c [extentsion][category]
 ### Options:
 - [-df] : default 
+
     classify the current directory only, ignores any sub-directories.
     
 - [-rk] : recursevily keep
+
     classify the current directory and all of its sub-directories, keeping everything in its own directory
     
 - [-rr] : recursevily remove
+
     moves the content of all subdirectories to the root directory and classifies it afterwards.
     
 - [-c] [file extension] [file type]
+
     defines a custom file extension, e.g: classifier -c .py Python-Scripts
     
 ### e.g:
