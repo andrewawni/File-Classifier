@@ -111,3 +111,10 @@ a script that classifies all your files according to their extension.
         └── videos
             ├── movie.mkv
             └── movie.mp4
+            
+            
+## To-Do
+
+[ ] support more extensions
+
+[ ] create an appimage
